@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VALORANT // INSTALOCK</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Top Navigation Bar -->
+    <header class="top-bar">
+      <div class="top-bar-left">
+        <div class="valorant-logo">
+          <svg viewBox="0 0 100 100" class="v-icon">
+            <path d="M99.25 19.5 50 83.25 0.75 19.5h33.87L50 39.5l15.38-20z" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="app-titles">
+          <span class="main-title">VALORANT</span>
+          <span class="sub-title">INSTALOCK AUTOMÁTICO</span>
+        </div>
+      </div>
+
+      <!-- Top Right Controls -->
+      <div class="top-bar-right">
+        <!-- Switch Auto-Lock -->
+        <div class="toggle-control" title="Ativar ou desativar o instalock automático">
+          <span class="toggle-label">AUTO-LOCK</span>
+          <label class="switch">
+            <input type="checkbox" id="toggleAutoLock" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <!-- Delay Selector -->
+        <div class="delay-control">
+          <select id="selectDelay" class="v-select" title="Velocidade de reação para trancar o agente">
+            <option value="1200" selected>Humano (1.2 s) [Recomendado]</option>
+            <option value="700">Seguro (700 ms)</option>
+            <option value="300">Rápido (300 ms)</option>
+            <option value="0">Instantâneo (0 ms)</option>
+          </select>
+        </div>
+
+        <!-- History Button (Drawer) -->
+        <button id="btnToggleDrawer" class="btn-tool" title="Histórico da Sessão">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m-2 10H7v-2h10v2m0-4H7V7h10v2m-4 8H7v-2h6v2Z"/>
+          </svg>
+        </button>
+
+        <!-- User Profile Pill -->
+        <div id="userProfile" class="user-pill hidden">
+          <div class="user-avatar-tag" id="userInitial">?</div>
+          <div class="user-info-text">
+            <span class="user-gamename" id="userName">Jogador#BR1</span>
+            <span class="user-cloud-status">🟢 NUVEM SINCRONIZADA</span>
+          </div>
+          <button id="btnLogout" class="btn-logout" title="Desconectar conta">&times;</button>
+        </div>
+
+        <!-- Button Login -->
+        <button id="btnOpenLogin" class="btn-login-riot">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+          </svg>
+          ENTRAR NA RIOT
+        </button>
+      </div>
+    </header>
+
+    <!-- Main View: Grid de Todos os Mapas (A Disposição Bacana de Antes) -->
+    <main class="maps-overview-main">
+      <!-- Update Alert Banner -->
+      <div id="updateBanner" class="update-banner hidden">
+        <div class="update-banner-left">
+          <div class="update-pulse-icon">⚡</div>
+          <div class="update-text-wrap">
+            <span class="update-title" id="updateBannerTitle">NOVA ATUALIZAÇÃO DISPONÍVEL!</span>
+            <span class="update-subtitle" id="updateBannerSubtitle">Uma versão mais recente do Instalock foi lançada no GitHub.</span>
+          </div>
+        </div>
+        <div class="update-banner-actions">
+          <button id="btnDownloadUpdate" class="btn-update-download">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+              <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/>
+            </svg>
+            <span id="btnDownloadText">BAIXAR NO GITHUB</span>
+          </button>
+          <button id="btnDismissUpdate" class="btn-update-dismiss" title="Fechar aviso">&times;</button>
+        </div>
+      </div>
+
+      <div class="overview-header">
+        <div>
+          <h1 class="overview-title">TODOS OS MAPAS</h1>
+          <p class="overview-subtitle">Selecione qualquer mapa abaixo para abrir a tela de escolha de agentes e configurar seu instalock</p>
+        </div>
+        <div class="overview-stats" id="overviewStats">
+          <span class="stats-badge" id="statsLockedCount">1 mapa configurado</span>
+        </div>
+      </div>
+
+      <!-- Grid com todos os mapas visíveis ao mesmo tempo -->
+      <div class="maps-grid" id="mapsGrid">
+        <div class="loading-state">Carregando mapas e agentes da API oficial...</div>
+      </div>
+    </main>
+
+    <!-- Modal em Tela Cheia: Tela de Seleção de Agentes do Valorant (Imagens 1, 2, 3 e 4) -->
+    <div id="agentSelectModal" class="agent-modal-backdrop hidden">
+      <div class="agent-modal-stage">
+        <!-- Topo da Seleção de Agente: Banner do Mapa e Botão Voltar -->
+        <div class="modal-top-bar">
+          <div class="modal-map-banner">
+            <div class="diamond-icon">◆</div>
+            <div>
+              <h2 class="modal-map-title" id="modalMapTitle">ASCENT</h2>
+              <span class="modal-map-sub">PADRÃO - COMPETITIVO</span>
+            </div>
+          </div>
+          <button id="btnCloseAgentModal" class="btn-return-maps">
+            ✕ VOLTAR AOS MAPAS
+          </button>
+        </div>
+
+        <div class="modal-content-split">
+          <!-- Coluna Esquerda: Filtros de Categoria e Grade de Agentes -->
+          <div class="agent-picker-pane">
+            <!-- Filtros de Role (Imagens 1, 2 e 3) -->
+            <div class="role-filter-row">
+              <button class="role-btn active" data-role="all" title="Todos os Agentes">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="#ffffff">
+                  <circle cx="5" cy="5" r="2.2"/><circle cx="12" cy="5" r="2.2"/><circle cx="19" cy="5" r="2.2"/>
+                  <circle cx="5" cy="12" r="2.2"/><circle cx="12" cy="12" r="2.2"/><circle cx="19" cy="12" r="2.2"/>
+                  <circle cx="5" cy="19" r="2.2"/><circle cx="12" cy="19" r="2.2"/><circle cx="19" cy="19" r="2.2"/>
+                </svg>
+              </button>
+
+              <button class="role-btn" data-role="Duelista" title="Duelistas">
+                <svg viewBox="0 0 240 240" width="22" height="22" fill="#ffffff">
+                  <path d="M22.9988 190.66L92.2097 121.449L21.7894 51.0283C8.06081 70.5408 0 94.329 0 120C0 146.416 8.53542 170.838 22.9988 190.66Z"/>
+                  <path d="M50.5874 217.899C70.182 231.817 94.1354 240 120 240C145.671 240 169.459 231.939 188.972 218.211L119.624 148.863L50.5874 217.899Z"/>
+                  <path d="M216.683 191.094C231.339 171.195 240 146.609 240 120C240 94.1354 231.817 70.182 217.899 50.5874L147.038 121.449L216.683 191.094Z"/>
+                  <path d="M190.66 22.9988L119.624 94.0346L48.9063 23.3171C68.8046 8.66075 93.3909 0 120 0C146.416 0 170.838 8.53542 190.66 22.9988Z"/>
+                </svg>
+              </button>
+
+              <button class="role-btn" data-role="Iniciador" title="Iniciadores">
+                <svg viewBox="0 0 240 240" width="22" height="22" fill="#ffffff">
+                  <path d="M121.207 0L203.739 137.227L158.388 137.227L158.378 137.211H108.192L164.766 231.366C208.867 213.622 240 170.444 240 119.994C240 54.1228 186.925 0.647765 121.207 0Z"/>
+                  <path d="M80.0272 6.81266L135.18 98.6024L70.1739 98.6025L39.617 98.3573L124.667 239.905C123.119 239.964 121.563 239.994 120 239.994C53.7258 239.994 0 186.268 0 119.994C0 67.7351 33.4053 23.2784 80.0272 6.81266Z"/>
+                </svg>
+              </button>
+
+              <button class="role-btn" data-role="Controlador" title="Controladores">
+                <svg viewBox="0 0 240 240" width="22" height="22" fill="#ffffff">
+                  <path d="M239.732 128.084C239.91 125.412 240 122.717 240 120C240 53.7258 186.274 0 120 0C53.7258 0 0 53.7258 0 120C0 122.736 0.0915846 125.451 0.271856 128.142L120.032 27.6512L120.037 27.6567L120.041 27.6512L239.732 128.084Z"/>
+                  <path d="M229.189 169.847L120.037 78.2571L10.8311 169.891C17.3651 184.165 26.6163 196.936 37.923 207.541L119.867 138.782L119.872 138.787L119.877 138.782L201.956 207.654C213.329 197.016 222.631 184.19 229.189 169.847Z"/>
+                  <path d="M168.191 229.931L119.872 189.387L71.6416 229.858C86.435 236.379 102.795 240 120 240C137.14 240 153.441 236.406 168.191 229.931Z"/>
+                </svg>
+              </button>
+
+              <button class="role-btn" data-role="Sentinela" title="Sentinelas">
+                <svg viewBox="0 0 240 240" width="22" height="22" fill="#ffffff">
+                  <path d="M134.416 239.143C193.893 232.022 240 181.395 240 120C240 103.114 236.512 87.0428 230.218 72.4671L134.416 239.143Z"/>
+                  <path d="M103.538 238.88C45.0528 230.856 0 180.69 0 120C0 103.845 3.19224 88.4361 8.98034 74.3689L103.538 238.88Z"/>
+                  <path d="M27.2732 43.8253H212.727C190.718 17.0657 157.352 0 120 0C82.6479 0 49.2817 17.0657 27.2732 43.8253Z"/>
+                  <path d="M59.0206 82.9558H179.055L119.049 187.356L59.0206 82.9558Z"/>
+                </svg>
+              </button>
+
+              <button id="btnDeselectAgent" class="btn-clear-agent" title="Desativar instalock neste mapa">
+                DESMARCAR
+              </button>
+            </div>
+
+            <!-- Grade de Agentes em 4 Colunas (Imagens 1, 2 e 4) -->
+            <div class="agent-grid" id="agentGrid">
+              <!-- Renderizado dinamicamente -->
+            </div>
+          </div>
+
+          <!-- Coluna Direita: Vitrine do Agente e Botão Confirmar -->
+          <div class="agent-showcase-pane">
+            <div class="showcase-bg" id="showcaseBg"></div>
+            <div class="showcase-overlay"></div>
+
+            <div class="agent-details-wrap">
+              <div class="agent-role-pill" id="agentRolePill">
+                <img id="agentRoleIcon" class="role-icon-small" src="" alt="Role">
+                <span id="agentRoleText">INICIADOR</span>
+              </div>
+
+              <h1 class="agent-showcase-name" id="agentShowcaseName">BREACH</h1>
+
+              <p class="agent-bio" id="agentBio">
+                Iniciadores desafiam situações arriscadas, preparando a equipe para entrar em terreno contestado.
+              </p>
+
+              <!-- Botão Vermelho de Confirmação (Estilo Imagem 1) -->
+              <div class="confirm-box">
+                <div class="lock-status-indicator" id="lockStatusIndicator">
+                  <span class="status-radar"></span>
+                  <span id="lockStatusText">PRONTO PARA INSTALOCK</span>
+                </div>
+
+                <button id="btnConfirmLock" class="btn-valorant-confirm">
+                  <span id="btnConfirmText">CONFIRMAR AGENTE</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Arte em Corpo Inteiro (Reyna / Breach em pé) -->
+            <div class="agent-portrait-container">
+              <img id="agentFullPortrait" class="agent-full-portrait" src="" alt="Agent Full Body">
+            </div>
+
+            <!-- Card do Jogador no Rodapé (Estilo Imagem 1) -->
+            <div class="player-card-bottom">
+              <div class="player-card-thumb">
+                <img id="playerAgentIcon" src="" alt="Player Choice">
+              </div>
+              <div class="player-card-info">
+                <span class="player-card-name" id="playerCardName">speedzinn</span>
+                <span class="player-card-status" id="playerCardStatus">Pronto para a partida</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floating Toast Notification -->
+    <div id="toastNotification" class="toast-notification hidden">
+      <span class="toast-icon">⚡</span>
+      <span class="toast-message" id="toastMessage">Partida detectada!</span>
+    </div>
+
+    <!-- Sliding History Drawer -->
+    <div id="historyDrawer" class="history-drawer hidden">
+      <div class="drawer-header">
+        <h3>HISTÓRICO DA SESSÃO</h3>
+        <button id="btnCloseDrawer" class="btn-drawer-close">&times;</button>
+      </div>
+      <div class="drawer-content" id="drawerLogs">
+        <div class="drawer-log-item info">
+          <span class="log-time">--:--</span>
+          <span class="log-desc">App pronto. Faça login na Riot para sincronizar.</span>
+        </div>
+      </div>
+      <div class="drawer-footer">
+        <button id="btnClearDrawerLogs" class="btn-drawer-clear">Limpar Histórico</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "autoLockEnabled": true,
+  "lockDelayMs": 1200,
+  "region": "br",
+  "mapAgents": {
+    "/Game/Maps/Duality/Duality": "a3bfb853-43b2-7238-a4f1-ad90e9e46bcc",
+    "/Game/Maps/Ascent/Ascent": "320b2a48-4d9b-a075-30f1-1f93a9b638fa"
+  }
+}
